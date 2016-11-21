@@ -3,7 +3,9 @@
     "version": "0.0.1",
     "description": "about me site",
     "dependencies": {},
-    "devDependencies": {},
+    "devDependencies": {
+    	"marked":"^0.3.6"
+    },
     "repository": {},
     "keywords": [],
     "author": "Konrad Knitter"
