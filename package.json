@@ -4,7 +4,11 @@
     "description": "about me site",
     "dependencies": {},
     "devDependencies": {
-    	"marked":"^0.3.6"
+    	"marked":"^0.3.6",
+	"fs-promise": "^1.0.0"
+    },
+    "scripts": {
+    	"start": "node --harmony website.js"
     },
     "repository": {},
     "keywords": [],
