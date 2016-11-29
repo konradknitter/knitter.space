@@ -1,9 +1,10 @@
-var http = require('http');
+let fs = require('fs-promise');
+let http = require('http');
 
-const PORT = 8080;
+const PORT = 3000;
 
-function handleRequest(request, response){
-     response.end("Something happens!" + request.url);
+async function handleRequest(request, response){
+     response.end(await fs.readFile("www/aboutme.html", "utf8"));
 }
 
 var server = http.createServer(handleRequest);
