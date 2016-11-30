@@ -8,7 +8,7 @@ I'm currently employeed as Technical Specialist at [Nokia] [1] working on [Singl
 
 * [Github](https://github.com/konradknitter)
 * [Twitter](https://twitter.com/konradknitter)
-* [LinkedIn](www.linkedin.com/in/konradknitter)
+* [LinkedIn](https://www.linkedin.com/in/konradknitter)
 * [Facebook](https://www.facebook.com/konradrobertknitter)
 
 [1]: http://www.nokia.com "Nokia"
