@@ -1,19 +1,23 @@
 {
-    "name": "konradknitter.com",
-    "version": "0.0.1",
+    "name": "knitter.space",
+    "version": "0.0.2",
     "description": "about me site",
     "dependencies": {
-    	"bootstrap": "^3.3.7"
+        "mime-types": "^2.1.13"
     },
     "devDependencies": {
         "config": "^1.24.0",
-	"fs-promise": "^1.0.0",
+	    "fs-promise": "^1.0.0",
     	"marked":"^0.3.6"
     },
     "scripts": {
-    	"start": "node --harmony website.js"
+    	"start": "node --harmony website.js",
+    	"startserver": "node --harmony server.js",
+    	"compile": "node --harmony website.js"
     },
-    "repository": {},
+    "repository": {
+        "github": "git@github.com:konradknitter/knitter.space.git"
+    },
     "keywords": [ "website", "personal" ],
     "author": "Konrad Knitter"
 }

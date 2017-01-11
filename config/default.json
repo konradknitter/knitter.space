@@ -1,4 +1,8 @@
 {
+    "serverPort": 3000,
     "sourcePath": "src/",
+    "staticFiles": [
+        "*.ccs" 
+    ],
     "outputPath": "www/"
 }

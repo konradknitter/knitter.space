@@ -1,40 +1,54 @@
 "use strict"
 
-let config   = require("config");
-let fs       = require("fs-promise");
-let marked   = require("marked");
-let path     = require("path");
+const config   = require("config");
+const fs       = require("fs-promise");
+const marked   = require("marked");
 
-let LOCAL_PATH = path.dirname(process.argv[1]);
-let OUTPUT_PATH = LOCAL_PATH + "/" + config.outputPath;
-let SOURCE_PATH = LOCAL_PATH + "/" + config.sourcePath;
-let ABOUTME_MD = SOURCE_PATH + "aboutme.md";
-
-let MARKDOWN_STYLE_LINK = "<link href=\"markdown.css\" rel=\"stylesheet\"></link>";
-
-async function createOutputDirectory() {
+async function createDirectory(directoryName) {
     try {
-        let fileStat = await fs.stat(OUTPUT_PATH);
+        let fileStat = await fs.stat(directoryName);
         if (fileStat && !fileStat.isDirectory()) {
-            console.log(OUTPUT_PATH + "path exists and it is not directory.");
+            console.log(directoryName + "path exists and it is not directory.");
         }
     } catch (err) {
         if (err.code == "ENOENT") {
-            fs.mkdir(OUTPUT_PATH);
+            fs.mkdir(directoryName);
         } else {
             throw err;
         }
-    }
+l    }
+}
+
+async function copyStaticFiles() {
+    var STATIC_FILES = [ "app.js", "index.html", "jquery.min.js", "bootstrap.min.css" ];
+
+    STATIC_FILES.forEach(async function(fileName) {
+        await fs.writeFile(config.outputPath + fileName,
+            await fs.readFile(config.sourcePath + fileName),
+            "utf8");
+    });
+}
+
+async function renderPage(fileName) {
+    var htmlOutput = marked(await fs.readFile(fileName, "utf8"));
+    return htmlOutput;
+}
+
+async function generateMarkdownFiles() {
+    var STATIC_FILES = [ 'about', 'projects', 'posts' ];
+    STATIC_FILES.forEach(async function(fileName) {
+        await fs.writeFile(config.outputPath + fileName + ".html", await renderPage(config.sourcePath + fileName + ".md"), "utf8");
+    });
 }
 
 async function main() {
-    await createOutputDirectory();
-    await fs.writeFile(OUTPUT_PATH + "markdown.css",
-                    await fs.readFile(SOURCE_PATH + "markdown.css"),
-                    "utf8");
-    let htmlOutput = MARKDOWN_STYLE_LINK + marked(await fs.readFile(ABOUTME_MD, "utf8"));
-    await fs.writeFile(OUTPUT_PATH + "aboutme.html", htmlOutput, "utf8");
-    console.log("project generated");
+    console.log("knitter.space project started");
+    
+    await createDirectory(config.outputPath);
+    await copyStaticFiles();
+    await generateMarkdownFiles();
+
+    console.log("knitter.space project generated");
 }
 
 main();

@@ -1,24 +1,29 @@
-const fs = require('fs-promise');
+const config = require('config');
 const http = require('http');
-
-const PORT = 3000;
-
+const fs = require('fs-promise');
+const mime = require('mime-types');
 const HTTP_SUCCESS_OK = 200;
 const HTTP_CLIENT_NOT_FOUND = 404;
-
-const RESOURCES = {
-    "/": "www/aboutme.html",
-    "/markdown.css": "www/markdown.css"
-};
 
 async function handleRequest(request, response) {
     console.log(request.method + ": " + request.url);
 
-    if (request.method === "GET" && RESOURCES.hasOwnProperty(request.url)) {
+    if (request.method === "GET") {
         response.statusCode = HTTP_SUCCESS_OK;
-        response.setHeader("Content-Type", "text/html");
-        response.write(await fs.readFile(RESOURCES[request.url], "utf8"));
+        if (request.url === "/") {
+            response.setHeader("Content-Type", mime.lookup("html"));
+            response.write(await fs.readFile(config.outputPath + "/index.html", "utf8"));
+        } else {
+            try {
+                response.setHeader("Content-Type", mime.lookup(config.outputPath + request.url));
+                response.write(await fs.readFile(config.outputPath + request.url, "utf8"));
+            } catch (err) {
+                console.log("File do not exists. Error 404");
+                response.writeHead(HTTP_CLIENT_NOT_FOUND);
+            }
+        }
     } else {
+        console.log("Method is not GET");
         response.writeHead(HTTP_CLIENT_NOT_FOUND);
     }
 
@@ -26,6 +31,6 @@ async function handleRequest(request, response) {
 }
 
 http.createServer(handleRequest)
-    .listen(PORT, function() {
-        console.log("HTTP Server on port " + PORT + " started!");
+    .listen(config.serverPort, function() {
+        console.log("HTTP Server on port " + config.serverPort + " started!");
     });
