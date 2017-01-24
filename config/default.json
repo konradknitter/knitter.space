@@ -2,8 +2,8 @@
     "serverPort": 3000,
     "sourcePath": "src/",
     "staticFiles": [
-        "css/",
-        "js/",
+        "css",
+        "js",
         "index.html"
     ],
     "outputPath": "www/"

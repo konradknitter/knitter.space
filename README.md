@@ -38,7 +38,7 @@ Files from sources subdirectory will not be linked by index.html, instead direct
 
 ## Configuration:
 
-Application uses [config](https://www.npmjs.com/package/config) node.js module for it's configuration.
+Application uses [config](https://www.npmjs.com/package/config) node.js module
 
 * **serverPort**: Port used for hosting output directory (default port: 3000)
 * **sourcePath**: Directory of source files.
