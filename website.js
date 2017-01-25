@@ -11,7 +11,6 @@ async function renderPage(fileName) {
 }
 
 async function generateMarkdownPage(fileName) { 
-    console.log(fileName);
     await fs.writeFileAsync(config.outputPath + path.relative(config.sourcePath, path.dirname(fileName)) + "/" + path.basename(fileName, ".md") + ".html", await renderPage(fileName), "utf8");
 }
 
@@ -31,6 +30,9 @@ async function generatePageFromDirectory(sourcePath) {
             generatePageFromDirectory(sourcePath + fileName + "/");
         } else if (path.extname(fileName) === ".md") {
             return generateMarkdownPage(sourcePath + fileName);
+        } else if (path.extname(fileName) === ".html") {
+            console.log(fileName);
+            await fs.copyAsync(sourcePath + "/" + fileName, config.outputPath + path.relative(config.sourcePath, sourcePath) + "/" + fileName); 
         }
     }));
 }
