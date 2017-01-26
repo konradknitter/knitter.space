@@ -4,7 +4,7 @@ Greetings traveler!
 
 My name is Konrad Knitter I am a Software Engineer in Wroclaw, Poland!
  
-I'm currently employeed as Technical Specialist at [Nokia] [1] working on [SingleRAN Mobile Networks] [2] and [CloudRAN] [3].
+I'm currently employeed as Technical Specialist at [Nokia] [1] working on [SingleRAN] [2] and [CloudRAN] [3] Mobile Networks.
 
 * [Github](https://github.com/konradknitter)
 * [Twitter](https://twitter.com/konradknitter)

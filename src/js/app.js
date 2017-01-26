@@ -12,8 +12,21 @@ function loadDefaultPage() {
 
 $('.navbar-brand').click(loadDefaultPage);
 
-$('.navbar-nav li a').click(function(){
+$.getJSON( "database.json", function(data) {
+    console.log("ello");
+  var items = [];
+  $.each( data, function( key, val ) {
+    items.push( "<li><a href=\"#\">" + key + "</a></li>" );
+  });
+
+  $( "<ul/>", {
+    "class": "nav navbar-nav",
+    html: items.join( "" )
+  }).appendTo( "#navbar" );
+  
+  $('.navbar-nav li a').click(function(){
     loadPage($(this).html() + ".html");
+   });
 });
 
 $(document).ready(loadDefaultPage);
