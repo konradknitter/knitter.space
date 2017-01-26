@@ -20,25 +20,44 @@ function isNotStaticFile(fileName) {
     }) === -1;
 }
 
-async function generatePageFromDirectory(sourcePath) {
+function getSourcePath(sourcePath, fileName) {
+    return sourcePath + "/" + fileName;
+}
+
+function getNormalizedOutputPath(sourcePath, fileName) {
+    return path.normalize(path.relative(config.sourcePath, getSourcePath(sourcePath, fileName)));
+}
+
+function getOutputPath(sourcePath, fileName) {
+    return config.outputPath + getNormalizedOutputPath(sourcePath, fileName);
+}
+
+async function generatePageFromDirectory(sourcePath, database) {
     let allSourceFiles = await fs.readdirAsync(sourcePath);
     let sourceFiles = allSourceFiles.filter(isNotStaticFile);
- 
+
     return Promise.all(sourceFiles.map(async function(fileName) {
-        if (await fs.isDirectoryAsync(sourcePath + "/" + fileName)) {
-            await fs.ensureDirAsync(config.outputPath + path.relative(config.sourcePath, sourcePath) + fileName);
-            generatePageFromDirectory(sourcePath + fileName + "/");
+        if (await fs.isDirectoryAsync(getSourcePath(sourcePath, fileName))) {
+            let file = getNormalizedOutputPath(sourcePath, fileName);
+            database[file] = {};
+            await fs.ensureDirAsync(getOutputPath(sourcePath, fileName));
+            return generatePageFromDirectory(getSourcePath(sourcePath, fileName), database[file]);
         } else if (path.extname(fileName) === ".md") {
-            return generateMarkdownPage(sourcePath + fileName);
+            let file = getNormalizedOutputPath(sourcePath, fileName);
+            database[path.basename(file, ".md")] = file;
+            return generateMarkdownPage(getSourcePath(sourcePath, fileName));
         } else if (path.extname(fileName) === ".html") {
-            console.log(fileName);
-            await fs.copyAsync(sourcePath + "/" + fileName, config.outputPath + path.relative(config.sourcePath, sourcePath) + "/" + fileName); 
+            let file = getNormalizedOutputPath(sourcePath, fileName);
+            database[path.basename(file, ".html")] = file;
+            return fs.copyAsync(getSourcePath(sourcePath, fileName), getOutputPath(sourcePath, fileName));
         }
     }));
 }
 
 async function generateIndexFile() {
-    return generatePageFromDirectory(config.sourcePath);
+    var database = {};
+    await generatePageFromDirectory(config.sourcePath, database);
+    await fs.writeFileAsync(config.outputPath + "database.json", JSON.stringify(database), "utf8");
 }
 
 async function main() {
@@ -49,7 +68,7 @@ async function main() {
         return fs.copyAsync(config.sourcePath + fileName, config.outputPath + fileName);
     }));
 
-    generateIndexFile();
+    await generateIndexFile();
 
     console.log("knitter.space project generated");
 }
