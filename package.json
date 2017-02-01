@@ -1,6 +1,6 @@
 {
     "name": "knitter.space",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "description": "about me site",
     "dependencies": {
         "mime-types": "^2.1.13"
