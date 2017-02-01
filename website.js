@@ -38,17 +38,17 @@ async function generatePageFromDirectory(sourcePath, database) {
 
     return Promise.all(sourceFiles.map(async function(fileName) {
         if (await fs.isDirectoryAsync(getSourcePath(sourcePath, fileName))) {
-            let file = getNormalizedOutputPath(sourcePath, fileName);
-            database[file] = {};
+            let file = path.basename(getNormalizedOutputPath(sourcePath, fileName));
+            database[file] = { type: "directory", subpages: {} };
             await fs.ensureDirAsync(getOutputPath(sourcePath, fileName));
-            return generatePageFromDirectory(getSourcePath(sourcePath, fileName), database[file]);
+            return generatePageFromDirectory(getSourcePath(sourcePath, fileName), database[file].subpages);
         } else if (path.extname(fileName) === ".md") {
             let file = getNormalizedOutputPath(sourcePath, fileName);
-            database[path.basename(file, ".md")] = file;
+            database[path.basename(file, ".md")] = { type: "page", location: getNormalizedOutputPath(sourcePath, path.basename(fileName, ".md") + ".html") };
             return generateMarkdownPage(getSourcePath(sourcePath, fileName));
         } else if (path.extname(fileName) === ".html") {
             let file = getNormalizedOutputPath(sourcePath, fileName);
-            database[path.basename(file, ".html")] = file;
+            database[path.basename(file, ".html")] = { type: "page", location: getNormalizedOutputPath(sourcePath, fileName) };
             return fs.copyAsync(getSourcePath(sourcePath, fileName), getOutputPath(sourcePath, fileName));
         }
     }));
@@ -57,7 +57,7 @@ async function generatePageFromDirectory(sourcePath, database) {
 async function generateIndexFile() {
     var database = {};
     await generatePageFromDirectory(config.sourcePath, database);
-    await fs.writeFileAsync(config.outputPath + "database.json", JSON.stringify(database), "utf8");
+    await fs.writeFileAsync(config.outputPath + "database.json", JSON.stringify(database, null, 4), "utf8");
 }
 
 async function main() {
